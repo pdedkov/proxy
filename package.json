@@ -1,0 +1,22 @@
+{
+  "name": "miralinks-proxy",
+  "description": "miralinks.ru proxy server with IP rotation",
+  "author": "Pavel E. Dedkov <pavel.dedkov@gmail.com>",
+  "version": "0.0.1",
+  "keywords": [
+    "proxy",
+    "ip"
+  ],
+  "dependencies": {
+    "colors": "~1.1.2",
+    "iprange": "~0.1.0",
+    "minimist": "~1.1.3",
+    "morgan": "^1.6.1",
+    "mout": "~0.11.0",
+    "node-localip": "~0.1.3",
+    "qconf": "~2.2.0",
+    "request": "^2.60.0"
+  },
+  "devDependencies": {},
+  "engine": "node >= 0.12.*"
+}
