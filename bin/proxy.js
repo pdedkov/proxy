@@ -23,12 +23,7 @@ domain.on('error', function(err) {
 
 domain.run(function() {
     // настройка работы с IP
-    var ip = new network({
-        // режим выбора IP
-        mode: conf.get('mode'),
-        // подсети
-        nets: conf.get('nets')
-    });
+    var ip = new network(conf.getAll())
 
     // логирование запросов в файл
     logger = morgan('combined', {stream: fs.createWriteStream(__dirname + '/../log/access.log', {flags: 'a'})})
