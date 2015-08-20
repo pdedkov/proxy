@@ -13,7 +13,8 @@ var
     argv = require('minimist')(process.argv.slice(2)),
    conf = require('../lib/config')([
        'file://../config/config.json', 'file://../config/local.json'
-   ], argv)
+   ], argv),
+    Client = require('../lib/client')
 ;
 
 // обработчик ошибок
@@ -28,6 +29,14 @@ domain.run(function() {
     // логирование запросов в файл
     logger = morgan('combined', {stream: fs.createWriteStream(__dirname + '/../log/access.log', {flags: 'a'})})
     http.createServer(function(req, res) {
+        // проверяем достпуных клиентов
+        var client = new Client(req.connection);
+
+        if (!client.isAllowed(conf.get['allowed'])) {
+            console.log(req.connection.remoteAddress.cyan);
+            return;
+        }
+
         console.log(req.url.yellow);
 
         logger(req, res, function(err) {
@@ -72,7 +81,17 @@ domain.run(function() {
                 res.end();
             }
           })
+    }).on('connection', function(socket) {
+
     }).on('connect', function(req, socketRequest, head) {
+        // проверяем достпуных клиентов
+        var client = new client(req.connection);
+
+        if (!client.isAllowed(conf.get['allowed'])) {
+            console.log(req.connection.remoteAddress.cyan);
+            return;
+        }
+
         console.log(req.url.grey);
         logger(req, socketRequest, function(err) {
             var parsed = url.parse('http://' + req.url);
