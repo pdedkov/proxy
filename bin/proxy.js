@@ -33,7 +33,7 @@ domain.run(function() {
         var client = new Client(req.connection);
 
         if (!client.isAllowed(conf.get('allowed'))) {
-            console.log(client.getIp().cyan);
+            console.log(client.ip.cyan);
             return;
         }
 
@@ -88,7 +88,7 @@ domain.run(function() {
         var client = new Client(req.connection);
 
         if (!client.isAllowed(conf.get('allowed'))) {
-            console.log(client.getIp().cyan);
+            console.log(client.ip.cyan);
             return;
         }
 
