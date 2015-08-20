@@ -32,8 +32,8 @@ domain.run(function() {
         // проверяем достпуных клиентов
         var client = new Client(req.connection);
 
-        if (!client.isAllowed(conf.get['allowed'])) {
-            console.log(req.connection.remoteAddress.cyan);
+        if (!client.isAllowed(conf.get('allowed'))) {
+            console.log(client.getIp().cyan);
             return;
         }
 
@@ -85,10 +85,10 @@ domain.run(function() {
 
     }).on('connect', function(req, socketRequest, head) {
         // проверяем достпуных клиентов
-        var client = new Client(req);
+        var client = new Client(req.connection);
 
-        if (!client.isAllowed(conf.get['allowed'])) {
-            console.log(req.connection.remoteAddress.cyan);
+        if (!client.isAllowed(conf.get('allowed'))) {
+            console.log(client.getIp().cyan);
             return;
         }
 
