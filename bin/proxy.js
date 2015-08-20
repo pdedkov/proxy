@@ -85,7 +85,7 @@ domain.run(function() {
 
     }).on('connect', function(req, socketRequest, head) {
         // проверяем достпуных клиентов
-        var client = new client(req.connection);
+        var client = new Client(req);
 
         if (!client.isAllowed(conf.get['allowed'])) {
             console.log(req.connection.remoteAddress.cyan);
