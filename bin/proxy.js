@@ -2,19 +2,18 @@
 
 var
     http = require('http'),
-    network = require('../lib/ip'),
+    Network = require('../lib/ip'),
     net = require('net'),
     url = require('url'),
-    fs = require('fs'),
     request = require('request'),
     domain = require('domain').create(),
-    morgan = require('morgan'),
     colors = require('colors'),
     argv = require('minimist')(process.argv.slice(2)),
    conf = require('../lib/config')([
        'file://../config/config.json', 'file://../config/local.json'
    ], argv),
-    Client = require('../lib/client')
+    Client = require('../lib/client'),
+    Logger = require('../lib/logger')
 ;
 
 // обработчик ошибок
@@ -24,10 +23,12 @@ domain.on('error', function(err) {
 
 domain.run(function() {
     // настройка работы с IP
-    var ip = new network(conf.getAll())
+    var ip = new Network(conf.getAll())
+
 
     // логирование запросов в файл
-    logger = morgan('combined', {stream: fs.createWriteStream(__dirname + '/../log/access.log', {flags: 'a'})})
+    logger = new Logger(conf.get('logger'));
+
     http.createServer(function(req, res) {
         // проверяем достпуных клиентов
         var client = new Client(req.connection);
@@ -81,8 +82,6 @@ domain.run(function() {
                 res.end();
             }
           })
-    }).on('connection', function(socket) {
-
     }).on('connect', function(req, socketRequest, head) {
         // проверяем достпуных клиентов
         var client = new Client(req.connection);
