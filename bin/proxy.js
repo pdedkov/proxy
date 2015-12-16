@@ -18,7 +18,7 @@ var
 ;
 
 
-var logger = new (winston.Logger)({
+var wins = new (winston.Logger)({
 	transports: [
 		new (winston.transports.Console)({
 			colorize: true,
@@ -52,11 +52,11 @@ domain.run(function() {
         var client = new Client(req.connection);
 
         if (!client.isAllowed(conf.get('allowed'))) {
-            logger.error(client.ip);
+            wins.error(client.ip);
             return;
         }
 
-		logger.info("%s : %s", req.url, client.ip);
+		wins.info("%s : %s", req.url, client.ip);
 
         logger(req, res, function(err) {
             try {
@@ -105,11 +105,11 @@ domain.run(function() {
         var client = new Client(req.connection);
 
         if (!client.isAllowed(conf.get('allowed'))) {
-			logger.error(client.ip);
+			wins.error(client.ip);
             return;
         }
 
-		logger.info("%s : %s", req.url, client.ip);
+		wins.info("%s : %s", req.url, client.ip);
 
         logger(req, socketRequest, function(err) {
             var parsed = url.parse('http://' + req.url);
