@@ -4,12 +4,10 @@
         "192.168.1.0/24",
         "192.168.2.0/24"
     ],
-  	"logger": {
-		"filename" : "../log/debug.log"
-  	},
     "port": 8888,
     "logger": {
         "path": "/../log/",
-        "format": "combined"
+        "format": "combined",
+	  	"filename" : "../log/debug.log"
     }
 }
