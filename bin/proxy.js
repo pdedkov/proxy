@@ -56,7 +56,7 @@ domain.run(function() {
             return;
         }
 
-        console.log(req.url.yellow);
+		logger.info("%s : %s", req.url, client.ip);
 
         logger(req, res, function(err) {
             try {
@@ -105,11 +105,12 @@ domain.run(function() {
         var client = new Client(req.connection);
 
         if (!client.isAllowed(conf.get('allowed'))) {
-            console.log(client.ip.cyan);
+			logger.error(client.ip);
             return;
         }
 
-        console.log(req.url.grey);
+		logger.info("%s : %s", req.url, client.ip);
+
         logger(req, socketRequest, function(err) {
             var parsed = url.parse('http://' + req.url);
             var socket = net.connect({
