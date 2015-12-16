@@ -18,7 +18,7 @@ var
 ;
 
 
-let logger = new (winston.Logger)({
+var logger = new (winston.Logger)({
 	transports: [
 		new (winston.transports.Console)({
 			colorize: true,
