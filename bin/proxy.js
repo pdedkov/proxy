@@ -13,8 +13,26 @@ var
        'file://../config/config.json', 'file://../config/local.json'
    ], argv),
     Client = require('../lib/client'),
-    Logger = require('../lib/logger')
+    Logger = require('../lib/logger'),
+	winston = require('winston')
 ;
+
+
+let logger = new (winston.Logger)({
+	transports: [
+		new (winston.transports.Console)({
+			colorize: true,
+			timestamp: true
+		}),
+		new (winston.transports.File)({
+			filename: conf.get('logger').filename,
+			timestamp: true,
+			json: false,
+			colorize: true,
+			tailable: false
+		}),
+	]
+});
 
 // обработчик ошибок
 domain.on('error', function(err) {
@@ -34,7 +52,7 @@ domain.run(function() {
         var client = new Client(req.connection);
 
         if (!client.isAllowed(conf.get('allowed'))) {
-            console.log(client.ip.cyan);
+            logger.error(client.ip);
             return;
         }
 
