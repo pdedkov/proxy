@@ -5,6 +5,8 @@
         "192.168.2.0/24"
     ],
     "port": 8888,
+  	"iface": "eth0",
+  	"family": "IPv4",
     "logger": {
         "path": "/../log/",
         "format": "combined",
