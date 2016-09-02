@@ -53,7 +53,7 @@ domain.run(function() {
 
         if (!client.isAllowed(conf.get('allowed'))) {
             wins.error(client.ip);
-			res.end();
+			res.end('not allowed');
 			return;
         }
 
@@ -77,7 +77,7 @@ domain.run(function() {
                     res.statusCode = 500;
                     res.statusMessage = err.toString();
 
-                    res.end();
+                    res.end(err.stack.toString());
                 });
 
                 proxyRequest.on('response', function(proxyResponse) {
@@ -98,7 +98,7 @@ domain.run(function() {
                 })
             } catch (error) {
                 console.log(error.toString().cyan);
-                res.end();
+                res.end(error.toString());
             }
           })
     }).on('connect', function(req, socketRequest, head) {
@@ -107,7 +107,7 @@ domain.run(function() {
 
         if (!client.isAllowed(conf.get('allowed'))) {
 			wins.error(client.ip);
-			socketRequest.end();
+			socketRequest.end('not allowed');
 			return;
         }
 
@@ -135,7 +135,7 @@ domain.run(function() {
             socket.on('error', function() {
                 // Сказать клиенту, что произошла ошибка
                 socketRequest.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n")
-                socketRequest.end()
+                socketRequest.end('error')
             })
             // Туннелирование к клиенту
             socketRequest.on('data', function(chunk) {
