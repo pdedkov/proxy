@@ -53,7 +53,8 @@ domain.run(function() {
 
         if (!client.isAllowed(conf.get('allowed'))) {
             wins.error(client.ip);
-            return;
+			res.end();
+			return;
         }
 
 		wins.info("%s : %s", req.url, client.ip);
@@ -106,7 +107,8 @@ domain.run(function() {
 
         if (!client.isAllowed(conf.get('allowed'))) {
 			wins.error(client.ip);
-            return;
+			socketRequest.end();
+			return;
         }
 
 		wins.info("%s : %s", req.url, client.ip);
