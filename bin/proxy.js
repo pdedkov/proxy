@@ -20,10 +20,6 @@ var
 
 var wins = new (winston.Logger)({
 	transports: [
-		new (winston.transports.Console)({
-			colorize: true,
-			timestamp: true
-		}),
 		new (winston.transports.File)({
 			filename: conf.get('logger').filename,
 			timestamp: true,
@@ -56,8 +52,6 @@ domain.run(function() {
 			res.end('not allowed');
 			return;
         }
-
-		wins.info("%s : %s", req.url, client.ip);
 
         logger(req, res, function(err) {
             try {
@@ -110,8 +104,6 @@ domain.run(function() {
 			socketRequest.end('not allowed');
 			return;
         }
-
-		wins.info("%s : %s", req.url, client.ip);
 
         logger(req, socketRequest, function(err) {
             var parsed = url.parse('http://' + req.url);
