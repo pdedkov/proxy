@@ -5,7 +5,6 @@ var
     Network = require('../lib/ip'),
     net = require('net'),
     url = require('url'),
-    request = require('request'),
     domain = require('domain').create(),
     colors = require('colors'),
     argv = require('minimist')(process.argv.slice(2)),
@@ -37,7 +36,7 @@ domain.on('error', function(err) {
 
 domain.run(function() {
     // настройка работы с IP
-    var ip = new Network(conf.getAll())
+    var ip = new Network(conf.getAll());
 
 
     // логирование запросов в файл
@@ -45,9 +44,9 @@ domain.run(function() {
 
     http.createServer(function(req, res) {
         // проверяем достпуных клиентов
-        var client = new Client(req.connection);
+        var client = new Client(req.connection, conf.get('allowed'));
 
-        if (!client.isAllowed(conf.get('allowed'))) {
+        if (!client.isAllowed()) {
             wins.error(client.ip);
 			res.end('not allowed');
 			return;
@@ -77,19 +76,19 @@ domain.run(function() {
                 proxyRequest.on('response', function(proxyResponse) {
                     proxyResponse.on('data', function(chunk) {
                         res.write(chunk, 'binary')
-                    })
+                    });
                     proxyResponse.on('end', function() {
                         res.end()
-                    })
+                    });
                     res.writeHead(proxyResponse.statusCode, proxyResponse.headers)
-                })
+                });
 
                 req.on('data', function(chunk) {
                     proxyRequest.write(chunk, 'binary')
-                })
+                });
                 req.on('end', function() {
                     proxyRequest.end()
-                })
+                });
             } catch (error) {
                 console.log(error.toString().cyan);
                 res.end(error.toString());
@@ -97,9 +96,9 @@ domain.run(function() {
           })
     }).on('connect', function(req, socketRequest, head) {
         // проверяем достпуных клиентов
-        var client = new Client(req.connection);
+        var client = new Client(req.connection, conf.get('allowed'));
 
-        if (!client.isAllowed(conf.get('allowed'))) {
+        if (!client.isAllowed()) {
 			wins.error(client.ip);
 			socketRequest.end('not allowed');
 			return;
@@ -112,37 +111,37 @@ domain.run(function() {
                 host: parsed.hostname,
                 localAddress: ip.select()
             }, function() {
-                socket.write(head)
+                socket.write(head);
                 // Сказать клиенту, что соединение установлено
-                socketRequest.write("HTTP/" + req.httpVersion + " 200 Connection established\r\n\r\n")
-            })
+                socketRequest.write("HTTP/" + req.httpVersion + " 200 Connection established\r\n\r\n");
+            });
 
             // Туннелирование к хосту
             socket.on('data', function(chunk) {
                 socketRequest.write(chunk)
-            })
+            });
             socket.on('end', function() {
                 socketRequest.end()
-            })
+            });
             socket.on('error', function() {
                 // Сказать клиенту, что произошла ошибка
-                socketRequest.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n")
-                socketRequest.end('error')
-            })
+                socketRequest.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
+                socketRequest.end('error');
+            });
             // Туннелирование к клиенту
             socketRequest.on('data', function(chunk) {
-                socket.write(chunk)
-            })
+                socket.write(chunk);
+            });
             socketRequest.on('end', function() {
-                socket.end()
-            })
+                socket.end();
+            });
             socketRequest.on('error', function() {
-                socket.end()
-            })
-        })
+                socket.end();
+            });
+        });
     }).listen(conf.get('port'));
 
-    console.log(('Proxy started at port: ' + conf.get('port')).toString().green)
+    console.log(('Proxy started at port: ' + conf.get('port')).toString().green);
 })
 
 
