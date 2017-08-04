@@ -128,7 +128,7 @@ domain.run(function() {
             socket.on('error', function(err) {
                 // Сказать клиенту, что произошла ошибка
                 socketRequest.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
-                socketRequest.end(err.code);
+                socketRequest.end(JSON.stringify(err));
             });
             // Туннелирование к клиенту
             socketRequest.on('data', function(chunk) {
