@@ -111,11 +111,13 @@ domain.run(function() {
                 host: parsed.hostname,
                 localAddress: ip.select()
             }, function() {
-                socket.write(head);
-                // Сказать клиенту, что соединение установлено
-                socketRequest.write("HTTP/" + req.httpVersion + " 200 Connection established\r\n\r\n");
+				socket.write(head, function(err) {
+					if (!err) {
+						// Сказать клиенту, что соединение установлено
+						socketRequest.write("HTTP/" + req.httpVersion + " 200 Connection established\r\n\r\n");
+					}
+				});
             });
-
             // Туннелирование к хосту
             socket.on('data', function(chunk) {
                 socketRequest.write(chunk)
@@ -123,10 +125,10 @@ domain.run(function() {
             socket.on('end', function() {
                 socketRequest.end()
             });
-            socket.on('error', function() {
+            socket.on('error', function(err) {
                 // Сказать клиенту, что произошла ошибка
                 socketRequest.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
-                socketRequest.end('error');
+                socketRequest.end(err.code);
             });
             // Туннелирование к клиенту
             socketRequest.on('data', function(chunk) {
