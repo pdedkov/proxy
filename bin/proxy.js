@@ -104,7 +104,7 @@ domain.run(function() {
 			return;
         }
 
-        logger(req, socketRequest, function(err) {
+        logger(req, socketRequest, function() {
             var parsed = url.parse('http://' + req.url);
             var socket = net.connect({
                 port: parsed.port,
@@ -112,16 +112,20 @@ domain.run(function() {
                 localAddress: ip.select()
             }, function() {
 				socket.write(head, function(err) {
-					if (!err) {
+					if (err) {
+						socketRequest.end();
+					} else {
 						// Сказать клиенту, что соединение установлено
 						socketRequest.write("HTTP/" + req.httpVersion + " 200 Connection established\r\n\r\n");
 					}
 				});
             });
+
             // Туннелирование к хосту
             socket.on('data', function(chunk) {
                 socketRequest.write(chunk)
             });
+
             socket.on('end', function() {
                 socketRequest.end()
             });
@@ -130,6 +134,7 @@ domain.run(function() {
                 socketRequest.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
                 socketRequest.end(JSON.stringify(err));
             });
+
             // Туннелирование к клиенту
             socketRequest.on('data', function(chunk) {
                 socket.write(chunk);
@@ -144,6 +149,6 @@ domain.run(function() {
     }).listen(conf.get('port'));
 
     console.log(('Proxy started at port: ' + conf.get('port')).toString().green);
-})
+});
 
 
